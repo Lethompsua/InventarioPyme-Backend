@@ -1,0 +1,23 @@
+## .NET / ASP.NET Core
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+
+## Secrets — never commit real credentials
+appsettings.Development.json
+appsettings.Production.json
+*.pfx
+*.p12
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Rider / JetBrains
+.idea/
+
+## Docker local override
+docker-compose.override.yml
