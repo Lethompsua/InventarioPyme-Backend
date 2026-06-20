@@ -56,6 +56,13 @@ builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 
+// Aplica migraciones pendientes al arrancar (útil en Railway/contenedores)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<InventarioDbContext>();
+    db.Database.Migrate();
+}
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
