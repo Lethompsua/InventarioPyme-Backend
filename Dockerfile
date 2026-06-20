@@ -15,8 +15,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Railway inyecta PORT como variable de entorno
-ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "InventarioPyme.Api.dll"]
+# Shell form para que $PORT se expanda en runtime (Railway lo inyecta automáticamente)
+CMD dotnet InventarioPyme.Api.dll --urls "http://+:${PORT:-8080}"
