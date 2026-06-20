@@ -15,8 +15,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
+// Railway inyecta DATABASE_URL en formato URI (postgresql://user:pass@host:port/db).
+// Si la connection string empieza con ese formato, se convierte al formato Npgsql key-value.
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection")
+              ?? Environment.GetEnvironmentVariable("DATABASE_URL")
+              ?? throw new InvalidOperationException("Connection string no configurada");
+
+if (connStr.StartsWith("postgresql://") || connStr.StartsWith("postgres://"))
+{
+    var uri = new Uri(connStr);
+    var userInfo = uri.UserInfo.Split(':');
+    connStr = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+}
+
 builder.Services.AddDbContext<InventarioDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connStr));
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key no configurada");
