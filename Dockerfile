@@ -17,5 +17,4 @@ COPY --from=build /app/publish .
 
 EXPOSE 8080
 
-# Shell form para que $PORT se expanda en runtime (Railway lo inyecta automáticamente)
-CMD dotnet InventarioPyme.Api.dll --urls "http://+:${PORT:-8080}"
+CMD ["dotnet", "InventarioPyme.Api.dll"]
